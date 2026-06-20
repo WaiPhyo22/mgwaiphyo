@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Wai Phyo – Senior Web Engineer specializing in Laravel, PHP, MySQL, and modern web development. Based in Yangon, Myanmar." />
+  <meta property="og:title" content="Wai Phyo – Senior Web Engineer" />
+  <meta property="og:description" content="Professional portfolio of Wai Phyo, Senior Web Engineer at Brycen Myanmar with 7+ years of experience." />
+  <title>Wai Phyo – Senior Web Engineer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div id="scroll-progress"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav id="navbar" class="navbar">
+    <div class="nav-inner">
+      <a href="#home" class="nav-brand">Wai <span>Phyo</span></a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#about"><span class="nav-icon"><i class="fas fa-user"></i></span><span class="nav-text">About</span></a></li>
+        <li><a href="#skills"><span class="nav-icon"><i class="fas fa-code"></i></span><span class="nav-text">Skills</span></a></li>
+        <li><a href="#experience"><span class="nav-icon"><i class="fas fa-briefcase"></i></span><span class="nav-text">Experience</span></a></li>
+        <li><a href="#projects"><span class="nav-icon"><i class="fas fa-folder-open"></i></span><span class="nav-text">Projects</span></a></li>
+        <li><a href="#contact"><span class="nav-icon"><i class="fas fa-envelope"></i></span><span class="nav-text">Contact</span></a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="home">
+    <div class="hero-grid-overlay"></div>
+    <div class="hero-particles" id="particles"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span>
+        Open to new opportunities &nbsp;·&nbsp; <i class="fas fa-robot"></i> AI-Driven
+      </div>
+
+      <div class="hero-avatar-wrap">
+        <div class="hero-avatar">
+          <img class="hero-slide" alt="Wai Phyo" />
+          <img class="hero-slide" alt="Wai Phyo" />
+          <img class="hero-slide" alt="Wai Phyo" />
+          <div class="avatar-fallback">WP</div>
+        </div>
+      </div>
+      <div class="slide-dots" id="slideDots">
+        <span class="slide-dot"></span>
+        <span class="slide-dot"></span>
+        <span class="slide-dot"></span>
+      </div>
+
+      <h1>Wai Phyo</h1>
+      <p class="hero-subtitle">
+        <span id="typingText">Senior Web Engineer</span><span class="typing-cursor">|</span>
+      </p>
+      <div class="hero-tagline">
+        <span class="tagline-chip"><i class="fas fa-map-marker-alt"></i> Yangon, Myanmar</span>
+        <span class="tagline-sep">·</span>
+        <span class="tagline-chip"><i class="fab fa-laravel"></i> Laravel Expert</span>
+        <span class="tagline-sep">·</span>
+        <span class="tagline-chip"><i class="fas fa-robot"></i> AI-Powered Dev</span>
+      </div>
+
+      <div class="hero-social">
+        <a href="https://www.facebook.com/way.phyo.353/" target="_blank" rel="noopener" aria-label="Facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a href="https://www.linkedin.com/in/wai-phyo-10512b280/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+        <a href="https://www.youtube.com/@waiphyoyaw" target="_blank" rel="noopener" aria-label="YouTube">
+          <i class="fab fa-youtube"></i>
+        </a>
+        <a href="mailto:waiphyo055192@gmail.com" aria-label="Email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </div>
+
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">
+          <i class="fas fa-code"></i> View Projects
+        </a>
+        <a href="#contact" class="btn btn-outline">
+          <i class="fas fa-paper-plane"></i> Get In Touch
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num">7+</span>
+          <span class="hero-stat-label">Years Exp.</span>
+        </div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">10+</span>
+          <span class="hero-stat-label">Projects</span>
+        </div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">JP</span>
+          <span class="hero-stat-label">Client Base</span>
+        </div>
+        <div class="hero-stat-sep"></div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">AWS</span>
+          <span class="hero-stat-label">Deployed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>Scroll</span>
+      <i class="fas fa-chevron-down"></i>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image-col fade-up">
+          <div class="about-image-wrap">
+            <div class="about-image-deco"></div>
+            <img class="about-slide" alt="Wai Phyo" />
+            <img class="about-slide" alt="Wai Phyo" />
+            <img class="about-slide" alt="Wai Phyo" />
+            <div id="aboutImgPlaceholder" class="about-image-placeholder">
+              <i class="fas fa-user-tie"></i>
+              <span>Wai Phyo</span>
+            </div>
+          </div>
+          <div class="about-slide-dots" id="aboutSlideDots">
+            <span class="about-slide-dot"></span>
+            <span class="about-slide-dot"></span>
+            <span class="about-slide-dot"></span>
+          </div>
+          <div class="about-counters">
+            <div class="about-counter-item">
+              <span class="count-num" data-count="7">0</span><span class="count-plus">+</span>
+              <span class="count-label">Years</span>
+            </div>
+            <div class="about-counter-item">
+              <span class="count-num" data-count="10">0</span><span class="count-plus">+</span>
+              <span class="count-label">Projects</span>
+            </div>
+            <div class="about-counter-item">
+              <span class="count-num" data-count="5">0</span><span class="count-plus">+</span>
+              <span class="count-label">Industries</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-text">
+          <div class="section-header" style="text-align:left; margin-bottom:1.5rem;">
+            <div class="section-tag">About Me</div>
+            <h2 class="section-title">Passionate Web Engineer<br>Building with AI-Powered Solutions</h2>
+            <div class="section-divider" style="margin:0;"></div>
+          </div>
+          <p class="fade-up">
+            I'm <strong>Wai Phyo</strong>, a results-driven <strong>Senior Web Engineer</strong> with over <strong>7 years of experience</strong> building efficient, scalable, and user-friendly web applications. My expertise spans <strong>Laravel (PHP)</strong>, <strong>MySQL</strong>, <strong>JavaScript</strong>, and <strong>Bootstrap</strong>, with a strong focus on clean code and maintainable architecture.
+          </p>
+          <p class="fade-up">
+            I specialize in API integration, version control with Git, local development with Docker, and deploying applications to <strong>AWS</strong> and <strong>DigitalOcean</strong>. I have extensive experience collaborating with Japanese engineering and QA teams, delivering high-quality software across healthcare, e-commerce, and enterprise domains.
+          </p>
+          <p class="fade-up">
+            I actively embrace <strong>AI-powered development</strong> — leveraging tools like <strong>Claude Code</strong>, <strong>GitHub Copilot</strong>, and <strong>ChatGPT</strong> to accelerate delivery, eliminate boilerplate, and maintain higher code quality. Combining human engineering judgment with AI assistance lets me ship faster without sacrificing reliability.
+          </p>
+          <div class="about-info fade-up">
+            <div class="about-info-item">
+              <span class="label">Email</span>
+              <span class="value"><a href="mailto:waiphyo055192@gmail.com">waiphyo055192@gmail.com</a></span>
+            </div>
+            <div class="about-info-item">
+              <span class="label">Location</span>
+              <span class="value">Yangon, Myanmar</span>
+            </div>
+            <div class="about-info-item">
+              <span class="label">Current Role</span>
+              <span class="value">Senior Web Engineer</span>
+            </div>
+            <div class="about-info-item">
+              <span class="label">Company</span>
+              <span class="value">Brycen Myanmar</span>
+            </div>
+            <div class="about-info-item">
+              <span class="label">Experience</span>
+              <span class="value">7+ Years</span>
+            </div>
+            <div class="about-info-item">
+              <span class="label">LinkedIn</span>
+              <span class="value"><a href="https://www.linkedin.com/in/wai-phyo-10512b280/" target="_blank" rel="noopener">View Profile</a></span>
+            </div>
+          </div>
+          <div class="fade-up">
+            <a href="https://www.linkedin.com/in/wai-phyo-10512b280/" target="_blank" rel="noopener" class="btn btn-primary">
+              <i class="fab fa-linkedin-in"></i> LinkedIn Profile
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SKILLS ===== -->
+  <section id="skills">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-tag">Technical Skills</div>
+        <h2 class="section-title">Technologies I Work With</h2>
+        <div class="section-divider"></div>
+      </div>
+
+      <div class="skills-categories">
+
+        <div class="skill-group fade-up">
+          <div class="skill-group-header">
+            <span class="skill-group-icon"><i class="fas fa-server"></i></span>
+            Backend
+          </div>
+          <div class="skills-grid">
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fab fa-php"></i></div>
+              <span class="skill-name">PHP / Laravel</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fas fa-database"></i></div>
+              <span class="skill-name">MySQL</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fas fa-plug"></i></div>
+              <span class="skill-name">RESTful API Integration</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fas fa-vial"></i></div>
+              <span class="skill-name">PHP Unit Testing</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-group fade-up">
+          <div class="skill-group-header">
+            <span class="skill-group-icon"><i class="fas fa-laptop-code"></i></span>
+            Frontend
+          </div>
+          <div class="skills-grid">
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fab fa-js-square"></i></div>
+              <span class="skill-name">JavaScript / Vue.js / jQuery</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fab fa-html5"></i></div>
+              <span class="skill-name">HTML5</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fab fa-css3-alt"></i></div>
+              <span class="skill-name">CSS3</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fab fa-bootstrap"></i></div>
+              <span class="skill-name">Bootstrap</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-group fade-up">
+          <div class="skill-group-header">
+            <span class="skill-group-icon"><i class="fas fa-cloud"></i></span>
+            DevOps &amp; Tools
+          </div>
+          <div class="skills-grid">
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fab fa-git-alt"></i></div>
+              <span class="skill-name">Git / GitHub / GitLab</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fab fa-docker"></i></div>
+              <span class="skill-name">Docker</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fab fa-aws"></i></div>
+              <span class="skill-name">AWS / DigitalOcean</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fas fa-tasks"></i></div>
+              <span class="skill-name">Backlog / Project Mgmt</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="skill-group fade-up">
+          <div class="skill-group-header">
+            <span class="skill-group-icon"><i class="fas fa-robot"></i></span>
+            AI-Powered Development
+          </div>
+          <div class="skills-grid">
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fas fa-brain"></i></div>
+              <span class="skill-name">Claude Code</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fas fa-magic"></i></div>
+              <span class="skill-name">GitHub Copilot</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fas fa-comments"></i></div>
+              <span class="skill-name">ChatGPT / Claude</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fas fa-microchip"></i></div>
+              <span class="skill-name">AI-Driven Workflow</span>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon"><i class="fas fa-code-branch"></i></div>
+              <span class="skill-name">Prompt Engineering</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== EXPERIENCE ===== -->
+  <section id="experience">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-tag">Work History</div>
+        <h2 class="section-title">Professional Experience</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="timeline">
+
+        <div class="timeline-item fade-up">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="timeline-header">
+              <div class="timeline-company-info">
+                <div class="company-avatar ca-blue">B</div>
+                <div>
+                  <div class="timeline-title">Senior Web Engineer</div>
+                  <div class="timeline-company">Brycen Myanmar</div>
+                </div>
+              </div>
+              <span class="timeline-badge">2023 – Present</span>
+            </div>
+            <div class="timeline-body">
+              <ul>
+                <li>Developed internal Laravel-based systems with RESTful APIs for Japanese clients.</li>
+                <li>Integrated third-party APIs including Rakuten, Yahoo Shopping, and Amazon Marketplace.</li>
+                <li>Managed development environments and deployments using Docker.</li>
+                <li>Collaborated directly with Japanese clients for QA, requirements gathering, and progress tracking.</li>
+              </ul>
+            </div>
+            <div class="timeline-projects">
+              <h6>Key Projects</h6>
+              <span class="timeline-project-tag"><i class="fas fa-box"></i> Rakuten &amp; Amazon API Integration</span>
+              <span class="timeline-project-tag"><i class="fas fa-shopping-cart"></i> Scroll360 EC Mall</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item fade-up">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="timeline-header">
+              <div class="timeline-company-info">
+                <div class="company-avatar ca-purple">S</div>
+                <div>
+                  <div class="timeline-title">Web Developer</div>
+                  <div class="timeline-company">Scala Communication</div>
+                </div>
+              </div>
+              <span class="timeline-badge">2018 – 2023</span>
+            </div>
+            <div class="timeline-body">
+              <ul>
+                <li>Full-stack web development using Laravel, Vue.js, and Blade templates with Bootstrap 5.</li>
+                <li>Designed and implemented UIs in close collaboration with Japanese UX teams.</li>
+                <li>Implemented batch email systems for health data analysis and customer follow-up.</li>
+                <li>Worked closely with Japanese engineers and QA teams across multiple projects.</li>
+              </ul>
+            </div>
+            <div class="timeline-projects">
+              <h6>Key Projects</h6>
+              <span class="timeline-project-tag"><i class="fas fa-heartbeat"></i> Fitbiz (Otsuka)</span>
+              <span class="timeline-project-tag"><i class="fas fa-chart-bar"></i> ORDX Health Survey</span>
+              <span class="timeline-project-tag"><i class="fas fa-utensils"></i> Mecipe</span>
+              <span class="timeline-project-tag"><i class="fas fa-home"></i> Insurance System</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS ===== -->
+  <section id="projects">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-tag">Portfolio</div>
+        <h2 class="section-title">Featured Projects</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="projects-grid">
+
+        <!-- Featured -->
+        <div class="project-card project-featured fade-up">
+          <div class="featured-ribbon">★ Featured</div>
+          <div class="project-card-header">
+            <div class="project-icon icon-blue">
+              <i class="fas fa-store"></i>
+            </div>
+            <div>
+              <div class="project-card-title">Scroll360 – EC Mall System</div>
+              <div class="project-card-subtitle">E-commerce Platform Management</div>
+            </div>
+          </div>
+          <div class="project-card-body">
+            <ul>
+              <li>Maintained a Laravel 5.5 system integrated with Rakuten, Yahoo, and Amazon APIs.</li>
+              <li>Handled batch processing for real-time stock, order, and price synchronization.</li>
+              <li>Worked with MySQL and MinIO for data storage and large file handling.</li>
+              <li>Developed EC Centralized Management for unified inventory and order control.</li>
+              <li>Automated batch scripts for syncing inventory data across multiple EC malls daily.</li>
+            </ul>
+          </div>
+          <div class="project-card-footer">
+            <span class="tech-tag">Laravel 5.5</span>
+            <span class="tech-tag">MySQL</span>
+            <span class="tech-tag">MinIO</span>
+            <span class="tech-tag">REST API</span>
+            <span class="tech-tag">Docker</span>
+          </div>
+        </div>
+
+        <!-- Fitbiz -->
+        <div class="project-card fade-up">
+          <div class="project-card-header">
+            <div class="project-icon icon-green">
+              <i class="fas fa-heartbeat"></i>
+            </div>
+            <div>
+              <div class="project-card-title">Fitbiz – Otsuka Healthcare</div>
+              <div class="project-card-subtitle">Health Tracking &amp; Email Automation</div>
+            </div>
+          </div>
+          <div class="project-card-body">
+            <ul>
+              <li>Built survey forms, health analysis modules, and user notification systems in Laravel.</li>
+              <li>Created batch email logic for customer follow-up based on health scores.</li>
+              <li>Designed UI for health tracking dashboards and lifestyle suggestions.</li>
+              <li>Worked closely with Japanese engineers to verify data integrity and app behavior.</li>
+            </ul>
+          </div>
+          <div class="project-card-footer">
+            <span class="tech-tag">Laravel</span>
+            <span class="tech-tag">MySQL</span>
+            <span class="tech-tag">Blade</span>
+            <span class="tech-tag">Batch Email</span>
+            <span class="tech-tag">Bootstrap</span>
+          </div>
+        </div>
+
+        <!-- ORDX -->
+        <div class="project-card fade-up">
+          <div class="project-card-header">
+            <div class="project-icon icon-purple">
+              <i class="fas fa-brain"></i>
+            </div>
+            <div>
+              <div class="project-card-title">ORDX – Otsuka Healthcare Survey</div>
+              <div class="project-card-subtitle">Personalized Health Prediction</div>
+            </div>
+          </div>
+          <div class="project-card-body">
+            <ul>
+              <li>Developed a personalized health prediction system using Laravel based on user-submitted survey data.</li>
+              <li>Integrated specialized modules for lifestyle, sleep quality, and immune health suggestions.</li>
+              <li>Collaborated with Japanese development and QA teams to align features with healthcare standards.</li>
+              <li>Handled secure data processing following healthcare privacy guidelines.</li>
+            </ul>
+          </div>
+          <div class="project-card-footer">
+            <span class="tech-tag">Laravel</span>
+            <span class="tech-tag">MySQL</span>
+            <span class="tech-tag">Vue.js</span>
+            <span class="tech-tag">Healthcare</span>
+          </div>
+        </div>
+
+        <!-- Mecipe -->
+        <div class="project-card fade-up">
+          <div class="project-card-header">
+            <div class="project-icon icon-orange">
+              <i class="fas fa-utensils"></i>
+            </div>
+            <div>
+              <div class="project-card-title">Mecipe – Recipe Sharing Platform</div>
+              <div class="project-card-subtitle">Full-Stack Recipe Management</div>
+            </div>
+          </div>
+          <div class="project-card-body">
+            <ul>
+              <li>Designed and implemented full-stack features using Laravel 9, Blade, and MySQL.</li>
+              <li>Developed an intuitive admin panel with search, filtering, and CRUD management.</li>
+              <li>Wrote PHP Unit Tests to validate core logic and improve code reliability.</li>
+              <li>Created comprehensive documentation covering system architecture and deployment.</li>
+              <li>Optimized database queries and frontend performance for a smooth production experience.</li>
+            </ul>
+          </div>
+          <div class="project-card-footer">
+            <span class="tech-tag">Laravel 9</span>
+            <span class="tech-tag">MySQL</span>
+            <span class="tech-tag">Blade</span>
+            <span class="tech-tag">PHPUnit</span>
+            <span class="tech-tag">Bootstrap</span>
+          </div>
+        </div>
+
+        <!-- Insurance System -->
+        <div class="project-card fade-up">
+          <div class="project-card-header">
+            <div class="project-icon icon-teal">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <div>
+              <div class="project-card-title">Home Contents Insurance System</div>
+              <div class="project-card-subtitle">Responsive Insurance UI/UX</div>
+            </div>
+          </div>
+          <div class="project-card-body">
+            <ul>
+              <li>Focused on frontend development using Laravel 9 and Bootstrap for a responsive UI.</li>
+              <li>Worked directly with Japanese clients to finalize UI/UX behavior and cross-browser compatibility.</li>
+              <li>Implemented key features: form validation, modals, and reusable components for policy workflows.</li>
+              <li>Improved user experience with dynamic feedback and accessibility-friendly design.</li>
+            </ul>
+          </div>
+          <div class="project-card-footer">
+            <span class="tech-tag">Laravel 9</span>
+            <span class="tech-tag">Bootstrap 5</span>
+            <span class="tech-tag">JavaScript</span>
+            <span class="tech-tag">jQuery</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-tag">Get In Touch</div>
+        <h2 class="section-title">Let's Work Together</h2>
+        <div class="section-divider"></div>
+        <p class="contact-intro fade-up">Have a project in mind or want to collaborate? I'd love to hear from you.</p>
+      </div>
+      <div class="contact-grid">
+        <a href="mailto:waiphyo055192@gmail.com" class="contact-card fade-up">
+          <div class="contact-card-icon"><i class="fas fa-envelope"></i></div>
+          <div class="contact-card-body">
+            <div class="contact-card-label">Email</div>
+            <div class="contact-card-value">waiphyo055192@gmail.com</div>
+          </div>
+          <div class="contact-card-arrow"><i class="fas fa-arrow-right"></i></div>
+        </a>
+        <a href="https://www.linkedin.com/in/wai-phyo-10512b280/" target="_blank" rel="noopener" class="contact-card fade-up">
+          <div class="contact-card-icon"><i class="fab fa-linkedin-in"></i></div>
+          <div class="contact-card-body">
+            <div class="contact-card-label">LinkedIn</div>
+            <div class="contact-card-value">wai-phyo-10512b280</div>
+          </div>
+          <div class="contact-card-arrow"><i class="fas fa-arrow-right"></i></div>
+        </a>
+      </div>
+      <div class="contact-availability">
+        <span class="pulse-dot"></span>
+        Available for new projects · Usually responds within 24 h
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="#home" class="nav-brand" style="font-size:1.15rem;">Wai <span>Phyo</span></a>
+          <p class="footer-tagline">Senior Web Engineer · Laravel &amp; Full-Stack</p>
+        </div>
+        <p class="footer-copy">© 2025 <span>Wai Phyo</span>. All rights reserved.&nbsp;<a href="login.html" style="color:rgba(255,255,255,0.08);font-size:0.7rem;text-decoration:none;" title="Admin">&#9632;</a></p>
+        <div class="footer-social">
+          <a href="https://www.facebook.com/way.phyo.353/" target="_blank" rel="noopener" aria-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/wai-phyo-10512b280/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a href="https://www.youtube.com/@waiphyoyaw" target="_blank" rel="noopener" aria-label="YouTube">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    (async () => {
+      try {
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { data } = await db
+          .from('profile')
+          .select('hero_image_url, hero_image_url_2, hero_image_url_3, about_image_url, about_image_url_2, about_image_url_3')
+          .eq('id', 1)
+          .maybeSingle();
+        if (!data) return;
+
+        // ── Hero slideshow ──────────────────────────────────────
+        const urls = [data.hero_image_url, data.hero_image_url_2, data.hero_image_url_3].filter(Boolean);
+        const slides = Array.from(document.querySelectorAll('.hero-slide'));
+        const dots   = Array.from(document.querySelectorAll('.slide-dot'));
+        const dotsWrap = document.getElementById('slideDots');
+
+        urls.forEach((url, i) => { if (slides[i]) slides[i].src = url; });
+
+        if (urls.length > 0) {
+          slides[0].classList.add('active');
+          dots[0] && dots[0].classList.add('active');
+          if (urls.length > 1 && dotsWrap) dotsWrap.classList.add('visible');
+
+          if (urls.length > 1) {
+            let cur = 0;
+            setInterval(() => {
+              slides[cur].classList.remove('active');
+              dots[cur] && dots[cur].classList.remove('active');
+              cur = (cur + 1) % urls.length;
+              slides[cur].classList.add('active');
+              dots[cur] && dots[cur].classList.add('active');
+            }, 3500);
+          }
+        }
+
+        // ── About slideshow ──────────────────────────────────────
+        const aboutUrls = [data.about_image_url, data.about_image_url_2, data.about_image_url_3].filter(Boolean);
+        const aboutSlides = Array.from(document.querySelectorAll('.about-slide'));
+        const aboutDots   = Array.from(document.querySelectorAll('.about-slide-dot'));
+        const aboutDotsWrap = document.getElementById('aboutSlideDots');
+        if (aboutUrls.length > 0) {
+          const ph = document.getElementById('aboutImgPlaceholder');
+          if (ph) ph.style.display = 'none';
+          aboutUrls.forEach((url, i) => { if (aboutSlides[i]) aboutSlides[i].src = url; });
+          aboutSlides[0].classList.add('active');
+          aboutDots[0] && aboutDots[0].classList.add('active');
+          if (aboutUrls.length > 1 && aboutDotsWrap) aboutDotsWrap.classList.add('visible');
+          if (aboutUrls.length > 1) {
+            let cur = 0;
+            setInterval(() => {
+              aboutSlides[cur].classList.remove('active');
+              aboutDots[cur] && aboutDots[cur].classList.remove('active');
+              cur = (cur + 1) % aboutUrls.length;
+              aboutSlides[cur].classList.add('active');
+              aboutDots[cur] && aboutDots[cur].classList.add('active');
+            }, 4000);
+          }
+        }
+      } catch (_) {}
+    })();
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>

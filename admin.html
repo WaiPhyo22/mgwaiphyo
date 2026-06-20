@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard – Wai Phyo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <style>
+    /* ===== RESET & TOKENS ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sidebar-w: 256px;
+      --header-h: 60px;
+      --navy: #0a0f1e;
+      --navy-2: #111827;
+      --navy-3: #1f2937;
+      --accent: #f39c12;
+      --accent-dk: #d68910;
+      --bg: #f3f4f6;
+      --white: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --danger: #ef4444;
+      --success: #10b981;
+      --r: 12px;
+      --r-sm: 8px;
+      --sh: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+      --sh-md: 0 4px 12px rgba(0,0,0,.08);
+    }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+    .sb-brand {
+      padding: 1.4rem 1.25rem 1.2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      flex-shrink: 0;
+    }
+    .sb-brand-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .sb-brand-name span { color: var(--accent); }
+    .sb-brand-sub {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.25);
+      margin-top: 0.15rem;
+    }
+    .sb-nav {
+      flex: 1;
+      padding: 0.9rem 0.75rem;
+      overflow-y: auto;
+    }
+    .sb-section {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      padding: 0.75rem 0.6rem 0.3rem;
+    }
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.65rem 0.75rem;
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+      cursor: pointer;
+      margin-bottom: 0.15rem;
+    }
+    .sb-link i { width: 17px; text-align: center; font-size: 0.9rem; flex-shrink: 0; }
+    .sb-link:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
+    .sb-link.active { color: #fff; background: rgba(243,156,18,0.16); }
+    .sb-link.active i { color: var(--accent); }
+    .sb-footer {
+      padding: 1rem 0.75rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      flex-shrink: 0;
+    }
+    .sb-user {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.5rem 0.6rem 0.75rem;
+    }
+    .sb-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: rgba(243,156,18,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .sb-user-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sb-user-role { font-size: 0.7rem; color: rgba(255,255,255,0.28); }
+    .btn-logout {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      padding: 0.6rem 0.75rem;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 8px;
+      color: #fca5a5;
+      font-size: 0.83rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-logout:hover { background: rgba(239,68,68,0.2); color: #fecaca; }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main { margin-left: var(--sidebar-w); min-height: 100vh; display: flex; flex-direction: column; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      height: var(--header-h);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+      z-index: 50;
+    }
+    .topbar-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+    .topbar-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.05rem; }
+    .content { flex: 1; padding: 1.75rem 2rem; }
+
+    /* ===== SECTIONS ===== */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ===== PAGE HEADER ===== */
+    .page-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.4rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .page-hd-title { font-size: 1.1rem; font-weight: 700; }
+    .page-hd-sub { font-size: 0.8rem; color: var(--muted); margin-top: 0.15rem; }
+
+    /* ===== STATS ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1.35rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      box-shadow: var(--sh);
+    }
+    .stat-ico {
+      width: 46px; height: 46px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .si-blue { background: #eff6ff; color: #1d4ed8; }
+    .si-green { background: #f0fdf4; color: #15803d; }
+    .si-purple { background: #faf5ff; color: #7e22ce; }
+    .si-amber { background: #fffbeb; color: #b45309; }
+    .stat-val { font-size: 1.8rem; font-weight: 800; line-height: 1.1; }
+    .stat-lbl { font-size: 0.78rem; color: var(--muted); font-weight: 500; margin-top: 0.2rem; }
+
+    /* ===== CARD ===== */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      box-shadow: var(--sh);
+      overflow: hidden;
+    }
+    .card-pad { padding: 1.5rem; }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--r-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 2px 6px rgba(243,156,18,0.35); }
+    .btn-primary:hover { background: var(--accent-dk); transform: translateY(-1px); }
+    .btn-secondary { background: #f9fafb; color: #374151; border: 1px solid var(--border); }
+    .btn-secondary:hover { background: #f3f4f6; }
+    .btn-danger { background: rgba(239,68,68,.1); color: var(--danger); border: 1px solid rgba(239,68,68,.25); }
+    .btn-danger:hover { background: rgba(239,68,68,.18); }
+    .btn-sm { padding: .35rem .7rem; font-size: .78rem; }
+    .btn-icon-sm {
+      width: 30px; height: 30px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+      color: #374151;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-icon-sm:hover { background: #e5e7eb; }
+    .btn-icon-sm.del { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
+    .btn-icon-sm.del:hover { background: #fee2e2; }
+
+    /* ===== TABLE ===== */
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      padding: 0.8rem 1.1rem;
+      text-align: left;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #f9fafb;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 0.9rem 1.1rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      border-bottom: 1px solid #f3f4f6;
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #fafafa; }
+    .td-actions { display: flex; gap: 0.4rem; align-items: center; }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+    .tag {
+      background: #eff6ff;
+      color: #1e40af;
+      padding: 0.15rem 0.55rem;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .tag-amber { background: #fffbeb; color: #92400e; }
+
+    /* ===== SKILLS GRID ===== */
+    .skills-grid-admin {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 0.9rem;
+      padding: 1.25rem;
+    }
+    .skill-item {
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+    .skill-item-left { display: flex; align-items: center; gap: 0.65rem; }
+    .skill-item-icon {
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      background: rgba(243,156,18,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .skill-item-name { font-size: 0.85rem; font-weight: 600; }
+    .skill-item-actions { display: flex; gap: 0.35rem; flex-shrink: 0; }
+
+    /* ===== EMPTY / LOADING STATES ===== */
+    .state-empty {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--muted);
+    }
+    .state-empty i { font-size: 2.2rem; opacity: 0.35; display: block; margin-bottom: 0.65rem; }
+    .state-empty p { font-size: 0.875rem; }
+    .state-loading {
+      text-align: center;
+      padding: 2.5rem;
+      color: var(--muted);
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+    }
+
+    /* ===== MODAL ===== */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(3px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--white);
+      border-radius: var(--r);
+      width: 100%;
+      max-width: 560px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      transform: scale(0.97) translateY(8px);
+      transition: transform 0.2s;
+    }
+    .overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-hd {
+      padding: 1.15rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .modal-hd h3 { font-size: 0.975rem; font-weight: 700; }
+    .modal-close {
+      width: 30px; height: 30px;
+      border-radius: 7px;
+      background: #f3f4f6;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: all 0.15s;
+    }
+    .modal-close:hover { background: #e5e7eb; color: var(--text); }
+    .modal-body { padding: 1.4rem; overflow-y: auto; flex: 1; }
+    .modal-ft {
+      padding: 1rem 1.4rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    /* ===== FORMS ===== */
+    .fg { margin-bottom: 1.1rem; }
+    .fg:last-child { margin-bottom: 0; }
+    .fl {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 0.38rem;
+    }
+    .fi, .fta, .fsel {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-family: inherit;
+      color: var(--text);
+      background: #fff;
+      transition: all 0.15s;
+      outline: none;
+    }
+    .fi:focus, .fta:focus, .fsel:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(243,156,18,0.12);
+    }
+    .fta { resize: vertical; min-height: 80px; line-height: 1.55; }
+    .fhint { font-size: 0.72rem; color: var(--muted); margin-top: 0.25rem; }
+    .fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* ===== PROFILE SECTION TITLE ===== */
+    .sec-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.1rem;
+      margin-top: 1.5rem;
+    }
+    .sec-title:first-child { margin-top: 0; }
+
+    /* ===== TOAST ===== */
+    .toast-wrap {
+      position: fixed;
+      bottom: 1.4rem;
+      right: 1.4rem;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.7rem 1rem;
+      border-radius: 9px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: var(--sh-md);
+      max-width: 310px;
+      animation: slide-in 0.2s ease;
+    }
+    .toast.ok { background: #064e3b; color: #a7f3d0; }
+    .toast.err { background: #7f1d1d; color: #fecaca; }
+    @keyframes slide-in { from { opacity:0; transform: translateX(14px); } to { opacity:1; transform: translateX(0); } }
+
+    /* ===== MISC ===== */
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===== IMAGE UPLOAD WIDGET ===== */
+    .img-upload-wrap {
+      border: 2px dashed var(--border);
+      border-radius: var(--r-sm);
+      padding: 1rem;
+      transition: border-color 0.15s;
+    }
+    .img-upload-wrap:hover { border-color: var(--accent); }
+    .img-preview-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+    }
+    .img-thumb {
+      width: 72px; height: 72px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .img-thumb.circle { border-radius: 50%; }
+    .img-thumb:not([src]), .img-thumb[src=""] { opacity: 0.3; }
+    .img-upload-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; }
+    .img-upload-actions { display: flex; gap: 0.45rem; align-items: center; flex-wrap: wrap; }
+    .upload-progress {
+      font-size: 0.78rem;
+      color: var(--accent);
+      display: none;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .upload-progress.visible { display: inline-flex; }
+
+    @media (max-width: 768px) {
+      :root { --sidebar-w: 0px; }
+      .sidebar { display: none; }
+      .main { margin-left: 0; }
+      .fg-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-name">Wai <span>Phyo</span></div>
+      <div class="sb-brand-sub">Admin Dashboard</div>
+    </div>
+
+    <nav class="sb-nav">
+      <div class="sb-section">Main</div>
+      <a class="sb-link active" data-sec="overview">
+        <i class="fas fa-tachometer-alt"></i> Overview
+      </a>
+
+      <div class="sb-section">Content</div>
+      <a class="sb-link" data-sec="projects">
+        <i class="fas fa-code"></i> Projects
+      </a>
+      <a class="sb-link" data-sec="skills">
+        <i class="fas fa-tools"></i> Skills
+      </a>
+      <a class="sb-link" data-sec="experience">
+        <i class="fas fa-briefcase"></i> Experience
+      </a>
+
+      <div class="sb-section">Settings</div>
+      <a class="sb-link" data-sec="profile">
+        <i class="fas fa-user-circle"></i> Profile
+      </a>
+      <a class="sb-link" data-sec="users">
+        <i class="fas fa-users"></i> Users
+      </a>
+      <a class="sb-link" href="index.html" target="_blank">
+        <i class="fas fa-external-link-alt"></i> View Portfolio
+      </a>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar" id="sbAvatar">A</div>
+        <div>
+          <div class="sb-user-name" id="sbUserName">Loading...</div>
+          <div class="sb-user-role">Administrator</div>
+        </div>
+      </div>
+      <button class="btn-logout" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <div class="topbar-title" id="topbarTitle">Overview</div>
+        <div class="topbar-sub">Portfolio Content Manager</div>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ── OVERVIEW ── -->
+      <section class="section active" id="sec-overview">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-ico si-blue"><i class="fas fa-code"></i></div>
+            <div>
+              <div class="stat-val" id="st-projects">–</div>
+              <div class="stat-lbl">Projects</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico si-green"><i class="fas fa-tools"></i></div>
+            <div>
+              <div class="stat-val" id="st-skills">–</div>
+              <div class="stat-lbl">Skills</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico si-purple"><i class="fas fa-briefcase"></i></div>
+            <div>
+              <div class="stat-val" id="st-exp">–</div>
+              <div class="stat-lbl">Experience Entries</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-ico si-amber"><i class="fas fa-star"></i></div>
+            <div>
+              <div class="stat-val">7+</div>
+              <div class="stat-lbl">Years Experience</div>
+            </div>
+          </div>
+        </div>
+        <div class="card card-pad">
+          <div style="font-size:1rem;font-weight:700;margin-bottom:.5rem">Welcome back!</div>
+          <p style="color:var(--muted);font-size:.875rem;line-height:1.65;margin-bottom:1.25rem">
+            Manage your portfolio content using the sidebar. Add or edit projects, update your skills,
+            and keep your experience history current. All data is stored in Supabase.
+          </p>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="goTo('projects')">
+              <i class="fas fa-plus"></i> Add Project
+            </button>
+            <button class="btn btn-secondary" onclick="goTo('skills')">
+              <i class="fas fa-tools"></i> Manage Skills
+            </button>
+            <button class="btn btn-secondary" onclick="goTo('profile')">
+              <i class="fas fa-user"></i> Edit Profile
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── PROJECTS ── -->
+      <section class="section" id="sec-projects">
+        <div class="page-hd">
+          <div>
+            <div class="page-hd-title">Projects</div>
+            <div class="page-hd-sub">Featured work shown on your portfolio</div>
+          </div>
+          <button class="btn btn-primary" onclick="openProjectModal()">
+            <i class="fas fa-plus"></i> Add Project
+          </button>
+        </div>
+        <div class="card">
+          <div id="projects-body">
+            <div class="state-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SKILLS ── -->
+      <section class="section" id="sec-skills">
+        <div class="page-hd">
+          <div>
+            <div class="page-hd-title">Skills</div>
+            <div class="page-hd-sub">Technologies and tools you work with</div>
+          </div>
+          <button class="btn btn-primary" onclick="openSkillModal()">
+            <i class="fas fa-plus"></i> Add Skill
+          </button>
+        </div>
+        <div class="card">
+          <div id="skills-body">
+            <div class="state-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── EXPERIENCE ── -->
+      <section class="section" id="sec-experience">
+        <div class="page-hd">
+          <div>
+            <div class="page-hd-title">Experience</div>
+            <div class="page-hd-sub">Your professional work history</div>
+          </div>
+          <button class="btn btn-primary" onclick="openExpModal()">
+            <i class="fas fa-plus"></i> Add Experience
+          </button>
+        </div>
+        <div class="card">
+          <div id="experience-body">
+            <div class="state-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── PROFILE ── -->
+      <section class="section" id="sec-profile">
+        <div class="page-hd">
+          <div>
+            <div class="page-hd-title">Profile</div>
+            <div class="page-hd-sub">Your personal and contact information</div>
+          </div>
+          <button class="btn btn-primary" id="saveProfileBtn" onclick="saveProfile()">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </div>
+        <div class="card card-pad">
+          <div id="profile-body">
+            <div class="state-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── USERS ── -->
+      <section class="section" id="sec-users">
+        <div class="page-hd">
+          <div>
+            <div class="page-hd-title">Users</div>
+            <div class="page-hd-sub">Registered admin accounts</div>
+          </div>
+        </div>
+        <div class="card">
+          <div id="users-body">
+            <div class="state-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+
+  <!-- ===== MODAL ===== -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <div class="modal-hd">
+        <h3 id="modalTitle">–</h3>
+        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-ft">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="runModalSave()">
+          <i class="fas fa-save"></i> Save
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOASTS ===== -->
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script>
+  // ─── Supabase init ────────────────────────────────────────────────────────
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let modalSaveFn = null;
+
+  // ─── Auth guard ───────────────────────────────────────────────────────────
+  (async () => {
+    const { data: { session } } = await db.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    const email = session.user.email || '';
+    document.getElementById('sbUserName').textContent = email;
+    document.getElementById('sbAvatar').textContent = (email[0] || 'A').toUpperCase();
+    loadStats();
+  })();
+
+  db.auth.onAuthStateChange((evt) => {
+    if (evt === 'SIGNED_OUT') window.location.href = 'login.html';
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => db.auth.signOut());
+
+  // ─── Navigation ───────────────────────────────────────────────────────────
+  const SEC_TITLES = {
+    overview: 'Overview', projects: 'Projects',
+    skills: 'Skills', experience: 'Experience', profile: 'Profile', users: 'Users'
+  };
+
+  document.querySelectorAll('.sb-link[data-sec]').forEach(a => {
+    a.addEventListener('click', (e) => { e.preventDefault(); goTo(a.dataset.sec); });
+  });
+
+  function goTo(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+    const sec = document.getElementById('sec-' + name);
+    if (sec) sec.classList.add('active');
+    const link = document.querySelector(`.sb-link[data-sec="${name}"]`);
+    if (link) link.classList.add('active');
+    document.getElementById('topbarTitle').textContent = SEC_TITLES[name] || name;
+    if (name === 'overview') loadStats();
+    else if (name === 'projects') loadProjects();
+    else if (name === 'skills') loadSkills();
+    else if (name === 'experience') loadExperience();
+    else if (name === 'profile') loadProfile();
+    else if (name === 'users') loadUsers();
+  }
+
+  // ─── Toast ────────────────────────────────────────────────────────────────
+  function toast(msg, type = 'ok') {
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.innerHTML = `<i class="fas ${type === 'ok' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>${escHtml(msg)}`;
+    document.getElementById('toastWrap').appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+  }
+
+  // ─── Modal ────────────────────────────────────────────────────────────────
+  function openModal(title, html, saveFn) {
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalBody').innerHTML = html;
+    modalSaveFn = saveFn;
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('overlay').classList.remove('open');
+    modalSaveFn = null;
+  }
+  async function runModalSave() { if (modalSaveFn) await modalSaveFn(); }
+  document.getElementById('overlay').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('overlay')) closeModal();
+  });
+
+  // ─── Stats ────────────────────────────────────────────────────────────────
+  async function loadStats() {
+    const [p, s, e] = await Promise.all([
+      db.from('projects').select('id', { count: 'exact', head: true }),
+      db.from('skills').select('id', { count: 'exact', head: true }),
+      db.from('experience').select('id', { count: 'exact', head: true })
+    ]);
+    document.getElementById('st-projects').textContent = p.count ?? '–';
+    document.getElementById('st-skills').textContent = s.count ?? '–';
+    document.getElementById('st-exp').textContent = e.count ?? '–';
+  }
+
+  // ─── PROJECTS CRUD ────────────────────────────────────────────────────────
+  async function loadProjects() {
+    const { data, error } = await db.from('projects').select('*').order('sort_order').order('id');
+    const el = document.getElementById('projects-body');
+    if (error) { el.innerHTML = errState(error.message); return; }
+    if (!data?.length) {
+      el.innerHTML = `<div class="state-empty"><i class="fas fa-code"></i><p>No projects yet. Click "Add Project" to get started.</p></div>`;
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>Title</th><th>Subtitle</th><th>Tech Tags</th><th>Order</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(p => `
+            <tr>
+              <td><strong>${escHtml(p.title)}</strong></td>
+              <td style="color:var(--muted)">${escHtml(p.subtitle || '–')}</td>
+              <td>
+                <div class="tags">
+                  ${(p.tech_tags || []).slice(0,4).map(t => `<span class="tag">${escHtml(t)}</span>`).join('')}
+                  ${(p.tech_tags || []).length > 4 ? `<span class="tag tag-amber">+${(p.tech_tags||[]).length - 4}</span>` : ''}
+                </div>
+              </td>
+              <td>${p.sort_order ?? 0}</td>
+              <td><div class="td-actions">
+                <button class="btn-icon-sm" title="Edit" onclick="editProject(${p.id})"><i class="fas fa-pen"></i></button>
+                <button class="btn-icon-sm del" title="Delete" onclick="deleteProject(${p.id})"><i class="fas fa-trash"></i></button>
+              </div></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function projectFormHtml(p = {}) {
+    const icons = ['icon-blue','icon-green','icon-purple','icon-orange','icon-teal'];
+    return `
+      <div class="fg">
+        <label class="fl">Title *</label>
+        <input class="fi" id="p_title" value="${escHtml(p.title||'')}" placeholder="Project title" />
+      </div>
+      <div class="fg">
+        <label class="fl">Subtitle</label>
+        <input class="fi" id="p_sub" value="${escHtml(p.subtitle||'')}" placeholder="Short description" />
+      </div>
+      <div class="fg">
+        <label class="fl">Description (one bullet per line)</label>
+        <textarea class="fta" id="p_desc" rows="5" placeholder="Each line becomes a bullet point">${escHtml((p.description_items||[]).join('\n'))}</textarea>
+      </div>
+      <div class="fg">
+        <label class="fl">Tech Tags</label>
+        <input class="fi" id="p_tags" value="${escHtml((p.tech_tags||[]).join(', '))}" placeholder="Laravel, MySQL, Docker" />
+        <div class="fhint">Comma-separated</div>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label class="fl">Icon (Font Awesome)</label>
+          <input class="fi" id="p_icon" value="${escHtml(p.icon||'fa-code')}" placeholder="fa-code" />
+          <div class="fhint">e.g. fa-store, fa-heartbeat</div>
+        </div>
+        <div class="fg">
+          <label class="fl">Icon Color</label>
+          <select class="fsel" id="p_color">
+            ${icons.map(c => `<option value="${c}" ${p.icon_color===c?'selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Sort Order</label>
+        <input class="fi" type="number" id="p_order" value="${p.sort_order??0}" min="0" />
+      </div>`;
+  }
+
+  function openProjectModal(p = {}) {
+    openModal(p.id ? 'Edit Project' : 'Add Project', projectFormHtml(p), () => saveProject(p.id));
+  }
+
+  async function editProject(id) {
+    const { data, error } = await db.from('projects').select('*').eq('id', id).single();
+    if (error) { toast('Failed to load project', 'err'); return; }
+    openProjectModal(data);
+  }
+
+  async function saveProject(editId) {
+    const title = document.getElementById('p_title').value.trim();
+    if (!title) { toast('Title is required', 'err'); return; }
+    const payload = {
+      title,
+      subtitle: document.getElementById('p_sub').value.trim(),
+      description_items: document.getElementById('p_desc').value.split('\n').map(s=>s.trim()).filter(Boolean),
+      tech_tags: document.getElementById('p_tags').value.split(',').map(s=>s.trim()).filter(Boolean),
+      icon: document.getElementById('p_icon').value.trim() || 'fa-code',
+      icon_color: document.getElementById('p_color').value,
+      sort_order: parseInt(document.getElementById('p_order').value) || 0
+    };
+    const { error } = editId
+      ? await db.from('projects').update(payload).eq('id', editId)
+      : await db.from('projects').insert(payload);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast(editId ? 'Project updated!' : 'Project added!');
+    closeModal(); loadProjects(); loadStats();
+  }
+
+  async function deleteProject(id) {
+    if (!confirm('Delete this project? This cannot be undone.')) return;
+    const { error } = await db.from('projects').delete().eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('Project deleted'); loadProjects(); loadStats();
+  }
+
+  // ─── SKILLS CRUD ─────────────────────────────────────────────────────────
+  async function loadSkills() {
+    const { data, error } = await db.from('skills').select('*').order('sort_order').order('id');
+    const el = document.getElementById('skills-body');
+    if (error) { el.innerHTML = errState(error.message); return; }
+    if (!data?.length) {
+      el.innerHTML = `<div class="state-empty"><i class="fas fa-tools"></i><p>No skills yet. Click "Add Skill" to get started.</p></div>`;
+      return;
+    }
+    el.innerHTML = `<div class="skills-grid-admin">${
+      data.map(s => `
+        <div class="skill-item">
+          <div class="skill-item-left">
+            <div class="skill-item-icon"><i class="${escHtml(s.icon_class||'fas fa-code')}"></i></div>
+            <div class="skill-item-name">${escHtml(s.name)}</div>
+          </div>
+          <div class="skill-item-actions">
+            <button class="btn-icon-sm" title="Edit" onclick="editSkill(${s.id})"><i class="fas fa-pen"></i></button>
+            <button class="btn-icon-sm del" title="Delete" onclick="deleteSkill(${s.id})"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      `).join('')
+    }</div>`;
+  }
+
+  function skillFormHtml(s = {}) {
+    return `
+      <div class="fg">
+        <label class="fl">Skill Name *</label>
+        <input class="fi" id="s_name" value="${escHtml(s.name||'')}" placeholder="PHP / Laravel" />
+      </div>
+      <div class="fg">
+        <label class="fl">Font Awesome Icon Class</label>
+        <input class="fi" id="s_icon" value="${escHtml(s.icon_class||'fas fa-code')}" placeholder="fab fa-php" />
+        <div class="fhint">e.g. fab fa-php · fab fa-js-square · fas fa-database</div>
+      </div>
+      <div class="fg">
+        <label class="fl">Sort Order</label>
+        <input class="fi" type="number" id="s_order" value="${s.sort_order??0}" min="0" />
+      </div>`;
+  }
+
+  function openSkillModal(s = {}) {
+    openModal(s.id ? 'Edit Skill' : 'Add Skill', skillFormHtml(s), () => saveSkill(s.id));
+  }
+
+  async function editSkill(id) {
+    const { data, error } = await db.from('skills').select('*').eq('id', id).single();
+    if (error) { toast('Failed to load skill', 'err'); return; }
+    openSkillModal(data);
+  }
+
+  async function saveSkill(editId) {
+    const name = document.getElementById('s_name').value.trim();
+    if (!name) { toast('Name is required', 'err'); return; }
+    const payload = {
+      name,
+      icon_class: document.getElementById('s_icon').value.trim() || 'fas fa-code',
+      sort_order: parseInt(document.getElementById('s_order').value) || 0
+    };
+    const { error } = editId
+      ? await db.from('skills').update(payload).eq('id', editId)
+      : await db.from('skills').insert(payload);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast(editId ? 'Skill updated!' : 'Skill added!');
+    closeModal(); loadSkills(); loadStats();
+  }
+
+  async function deleteSkill(id) {
+    if (!confirm('Delete this skill?')) return;
+    const { error } = await db.from('skills').delete().eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('Skill deleted'); loadSkills(); loadStats();
+  }
+
+  // ─── EXPERIENCE CRUD ─────────────────────────────────────────────────────
+  async function loadExperience() {
+    const { data, error } = await db.from('experience').select('*').order('sort_order').order('id');
+    const el = document.getElementById('experience-body');
+    if (error) { el.innerHTML = errState(error.message); return; }
+    if (!data?.length) {
+      el.innerHTML = `<div class="state-empty"><i class="fas fa-briefcase"></i><p>No experience entries yet.</p></div>`;
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>Title</th><th>Company</th><th>Period</th><th>Order</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(e => `
+            <tr>
+              <td><strong>${escHtml(e.title)}</strong></td>
+              <td>${escHtml(e.company||'–')}</td>
+              <td><span class="tag tag-amber">${escHtml(e.period||'–')}</span></td>
+              <td>${e.sort_order??0}</td>
+              <td><div class="td-actions">
+                <button class="btn-icon-sm" title="Edit" onclick="editExp(${e.id})"><i class="fas fa-pen"></i></button>
+                <button class="btn-icon-sm del" title="Delete" onclick="deleteExp(${e.id})"><i class="fas fa-trash"></i></button>
+              </div></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function expFormHtml(e = {}) {
+    return `
+      <div class="fg-row">
+        <div class="fg">
+          <label class="fl">Job Title *</label>
+          <input class="fi" id="e_title" value="${escHtml(e.title||'')}" placeholder="Senior Web Engineer" />
+        </div>
+        <div class="fg">
+          <label class="fl">Company</label>
+          <input class="fi" id="e_company" value="${escHtml(e.company||'')}" placeholder="Company Name" />
+        </div>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label class="fl">Period</label>
+          <input class="fi" id="e_period" value="${escHtml(e.period||'')}" placeholder="2023 – Present" />
+        </div>
+        <div class="fg">
+          <label class="fl">Sort Order</label>
+          <input class="fi" type="number" id="e_order" value="${e.sort_order??0}" min="0" />
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Description (one bullet per line)</label>
+        <textarea class="fta" id="e_desc" rows="5">${escHtml((e.description_items||[]).join('\n'))}</textarea>
+      </div>
+      <div class="fg">
+        <label class="fl">Key Projects (one per line)</label>
+        <textarea class="fta" id="e_projs" rows="3" placeholder="Project name">${escHtml((e.project_tags||[]).join('\n'))}</textarea>
+      </div>`;
+  }
+
+  function openExpModal(e = {}) {
+    openModal(e.id ? 'Edit Experience' : 'Add Experience', expFormHtml(e), () => saveExp(e.id));
+  }
+
+  async function editExp(id) {
+    const { data, error } = await db.from('experience').select('*').eq('id', id).single();
+    if (error) { toast('Failed to load experience', 'err'); return; }
+    openExpModal(data);
+  }
+
+  async function saveExp(editId) {
+    const title = document.getElementById('e_title').value.trim();
+    if (!title) { toast('Title is required', 'err'); return; }
+    const payload = {
+      title,
+      company: document.getElementById('e_company').value.trim(),
+      period: document.getElementById('e_period').value.trim(),
+      description_items: document.getElementById('e_desc').value.split('\n').map(s=>s.trim()).filter(Boolean),
+      project_tags: document.getElementById('e_projs').value.split('\n').map(s=>s.trim()).filter(Boolean),
+      sort_order: parseInt(document.getElementById('e_order').value) || 0
+    };
+    const { error } = editId
+      ? await db.from('experience').update(payload).eq('id', editId)
+      : await db.from('experience').insert(payload);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast(editId ? 'Experience updated!' : 'Experience added!');
+    closeModal(); loadExperience(); loadStats();
+  }
+
+  async function deleteExp(id) {
+    if (!confirm('Delete this experience entry?')) return;
+    const { error } = await db.from('experience').delete().eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('Experience deleted'); loadExperience(); loadStats();
+  }
+
+  // ─── PROFILE ─────────────────────────────────────────────────────────────
+  async function loadProfile() {
+    const { data: p } = await db.from('profile').select('*').eq('id', 1).maybeSingle();
+    const d = p || {};
+    document.getElementById('profile-body').innerHTML = `
+      <div class="sec-title">Basic Information</div>
+      <div class="fg-row">
+        <div class="fg">
+          <label class="fl">Full Name</label>
+          <input class="fi" id="pr_name" value="${escHtml(d.full_name||'')}" placeholder="Wai Phyo" />
+        </div>
+        <div class="fg">
+          <label class="fl">Location</label>
+          <input class="fi" id="pr_loc" value="${escHtml(d.location||'')}" placeholder="Yangon, Myanmar" />
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Tagline / Title</label>
+        <input class="fi" id="pr_tag" value="${escHtml(d.tagline||'')}" placeholder="Senior Web Engineer · Laravel & Full-Stack" />
+      </div>
+
+      <div class="sec-title">Bio</div>
+      <div class="fg">
+        <label class="fl">Bio Paragraph 1</label>
+        <textarea class="fta" id="pr_bio1" rows="3">${escHtml(d.bio1||'')}</textarea>
+      </div>
+      <div class="fg">
+        <label class="fl">Bio Paragraph 2</label>
+        <textarea class="fta" id="pr_bio2" rows="3">${escHtml(d.bio2||'')}</textarea>
+      </div>
+      <div class="fg">
+        <label class="fl">Bio Paragraph 3</label>
+        <textarea class="fta" id="pr_bio3" rows="2">${escHtml(d.bio3||'')}</textarea>
+      </div>
+
+      <div class="sec-title">Contact &amp; Social Links</div>
+      <div class="fg-row">
+        <div class="fg">
+          <label class="fl">Email</label>
+          <input class="fi" type="email" id="pr_email" value="${escHtml(d.email||'')}" />
+        </div>
+        <div class="fg">
+          <label class="fl">GitHub URL</label>
+          <input class="fi" type="url" id="pr_github" value="${escHtml(d.github_url||'')}" />
+        </div>
+      </div>
+      <div class="fg-row">
+        <div class="fg">
+          <label class="fl">LinkedIn URL</label>
+          <input class="fi" type="url" id="pr_linkedin" value="${escHtml(d.linkedin_url||'')}" />
+        </div>
+        <div class="fg">
+          <label class="fl">YouTube URL</label>
+          <input class="fi" type="url" id="pr_youtube" value="${escHtml(d.youtube_url||'')}" />
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Facebook URL</label>
+        <input class="fi" type="url" id="pr_facebook" value="${escHtml(d.facebook_url||'')}" />
+      </div>
+
+      <div class="sec-title">Hero Slideshow Photos</div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem;">
+        Upload up to 3 photos — they rotate as a crossfade slideshow in the hero avatar. Photo 1 is shown first.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+        ${['hero','hero2','hero3'].map((key, i) => {
+          const urlVal = key === 'hero' ? d.hero_image_url : (key === 'hero2' ? d.hero_image_url_2 : d.hero_image_url_3);
+          const label  = i === 0 ? 'Photo 1 (First)' : `Photo ${i+1}`;
+          return `
+          <div class="fg" style="margin-bottom:0">
+            <label class="fl">${label}</label>
+            <div class="img-upload-wrap">
+              <div class="img-preview-row">
+                <img id="pr_${key}_preview" class="img-thumb circle"
+                     src="${escHtml(urlVal||'')}" alt=""
+                     onerror="this.removeAttribute('src')" />
+                <div>
+                  <div class="img-upload-meta">Max 5 MB · JPG PNG WebP GIF</div>
+                  <div class="img-upload-actions">
+                    <input type="file" id="pr_${key}_file" accept="image/*" style="display:none"
+                           onchange="handleImgUpload(this,'${key}')" />
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            onclick="document.getElementById('pr_${key}_file').click()">
+                      <i class="fas fa-upload"></i> Upload
+                    </button>
+                    <span id="${key}-upload-progress" class="upload-progress">
+                      <i class="fas fa-spinner fa-spin"></i> Saving…
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <input class="fi" id="pr_${key}" type="url"
+                     value="${escHtml(urlVal||'')}"
+                     placeholder="or paste URL"
+                     oninput="syncPreview('${key}')" />
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <div class="sec-title" style="margin-top:1.75rem;">About Section Photos</div>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:1rem;">
+        Upload up to 3 photos — they rotate as a crossfade slideshow beside your bio. Photo 1 is shown first.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+        ${['about','about2','about3'].map((key, i) => {
+          const urlVal = key === 'about' ? d.about_image_url : (key === 'about2' ? d.about_image_url_2 : d.about_image_url_3);
+          const label  = i === 0 ? 'Photo 1 (First)' : `Photo ${i+1}`;
+          return `
+          <div class="fg" style="margin-bottom:0">
+            <label class="fl">${label}</label>
+            <div class="img-upload-wrap">
+              <div class="img-preview-row">
+                <img id="pr_${key}_preview" class="img-thumb"
+                     src="${escHtml(urlVal||'')}" alt=""
+                     onerror="this.removeAttribute('src')" />
+                <div>
+                  <div class="img-upload-meta">Max 5 MB · JPG PNG WebP GIF</div>
+                  <div class="img-upload-actions">
+                    <input type="file" id="pr_${key}_file" accept="image/*" style="display:none"
+                           onchange="handleImgUpload(this,'${key}')" />
+                    <button type="button" class="btn btn-secondary btn-sm"
+                            onclick="document.getElementById('pr_${key}_file').click()">
+                      <i class="fas fa-upload"></i> Upload
+                    </button>
+                    <span id="${key}-upload-progress" class="upload-progress">
+                      <i class="fas fa-spinner fa-spin"></i> Saving…
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <input class="fi" id="pr_${key}" type="url"
+                     value="${escHtml(urlVal||'')}"
+                     placeholder="or paste URL"
+                     oninput="syncPreview('${key}')" />
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  async function saveProfile() {
+    const btn = document.getElementById('saveProfileBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Saving...';
+    const payload = {
+      id: 1,
+      full_name: document.getElementById('pr_name').value.trim(),
+      location: document.getElementById('pr_loc').value.trim(),
+      tagline: document.getElementById('pr_tag').value.trim(),
+      bio1: document.getElementById('pr_bio1').value.trim(),
+      bio2: document.getElementById('pr_bio2').value.trim(),
+      bio3: document.getElementById('pr_bio3').value.trim(),
+      email: document.getElementById('pr_email').value.trim(),
+      github_url: document.getElementById('pr_github').value.trim(),
+      linkedin_url: document.getElementById('pr_linkedin').value.trim(),
+      youtube_url: document.getElementById('pr_youtube').value.trim(),
+      facebook_url: document.getElementById('pr_facebook').value.trim(),
+      hero_image_url:   document.getElementById('pr_hero').value.trim(),
+      hero_image_url_2: document.getElementById('pr_hero2').value.trim(),
+      hero_image_url_3: document.getElementById('pr_hero3').value.trim(),
+      about_image_url:   document.getElementById('pr_about').value.trim(),
+      about_image_url_2: document.getElementById('pr_about2').value.trim(),
+      about_image_url_3: document.getElementById('pr_about3').value.trim()
+    };
+    const { error } = await db.from('profile').upsert(payload, { onConflict: 'id' });
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('Profile saved!');
+  }
+
+  // ─── USERS ───────────────────────────────────────────────────────────────
+  let currentUserId = null;
+
+  (async () => {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) currentUserId = session.user.id;
+  })();
+
+  async function loadUsers() {
+    const el = document.getElementById('users-body');
+    el.innerHTML = '<div class="state-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+    const { data, error } = await db.from('admin_users').select('*').order('created_at');
+    if (error) { el.innerHTML = errState(error.message); return; }
+    if (!data?.length) {
+      el.innerHTML = `<div class="state-empty"><i class="fas fa-users"></i><p>No users found. Register a new admin account from the login page.</p></div>`;
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>User</th><th>Email</th><th>Registered</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(u => {
+            const initials = (u.email[0] || 'A').toUpperCase();
+            const isMe = u.id === currentUserId;
+            const date = new Date(u.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+            return `<tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:.65rem">
+                  <div style="width:34px;height:34px;border-radius:50%;background:rgba(243,156,18,.15);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:var(--accent);flex-shrink:0">${escHtml(initials)}</div>
+                  <div>
+                    <div style="font-weight:600;font-size:.875rem">${escHtml(u.email.split('@')[0])}</div>
+                    ${isMe ? '<div style="font-size:.7rem;color:var(--accent);font-weight:600">You</div>' : ''}
+                  </div>
+                </div>
+              </td>
+              <td style="color:var(--muted);font-size:.875rem">${escHtml(u.email)}</td>
+              <td style="color:var(--muted);font-size:.875rem">${date}</td>
+              <td>
+                ${isMe
+                  ? '<span style="font-size:.75rem;color:var(--muted)">Cannot remove yourself</span>'
+                  : `<button class="btn btn-danger btn-sm" onclick="removeUser('${escHtml(u.id)}','${escHtml(u.email)}')"><i class="fas fa-trash"></i> Remove</button>`
+                }
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  async function removeUser(id, email) {
+    if (!confirm(`Remove "${email}" from the user list?\n\nNote: this removes them from the admin list. To fully revoke access, also delete the account in your Supabase Auth dashboard.`)) return;
+    const { error } = await db.from('admin_users').delete().eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('User removed.');
+    loadUsers();
+  }
+
+  // ─── Image Upload ─────────────────────────────────────────────────────────
+  function syncPreview(type) {
+    const url = document.getElementById(`pr_${type}`).value;
+    const img = document.getElementById(`pr_${type}_preview`);
+    img.src = url || '';
+  }
+
+  async function handleImgUpload(input, type) {
+    const file = input.files[0];
+    if (!file) return;
+    const progress = document.getElementById(`${type}-upload-progress`);
+    progress.classList.add('visible');
+    const url = await uploadProfileImage(file, type);
+    progress.classList.remove('visible');
+    input.value = '';
+    if (!url) return;
+
+    // Update preview and URL field
+    document.getElementById(`pr_${type}`).value = url;
+    document.getElementById(`pr_${type}_preview`).src = url;
+
+    // Auto-save URL directly to profile table — no "Save Changes" click needed
+    const fieldMap = { hero: 'hero_image_url', hero2: 'hero_image_url_2', hero3: 'hero_image_url_3', about: 'about_image_url', about2: 'about_image_url_2', about3: 'about_image_url_3' };
+    const field = fieldMap[type];
+    const { error } = await db.from('profile')
+      .upsert({ id: 1, [field]: url }, { onConflict: 'id' });
+    if (error) {
+      toast('Uploaded but failed to save: ' + error.message, 'err');
+    } else {
+      toast('Photo uploaded and saved! Reload your portfolio to see it.');
+    }
+  }
+
+  async function uploadProfileImage(file, type) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!['jpg','jpeg','png','webp','gif'].includes(ext)) {
+      toast('Only JPG, PNG, WebP or GIF images are allowed', 'err'); return null;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast('File must be under 5 MB', 'err'); return null;
+    }
+    const filename = `${type}-${Date.now()}.${ext}`;
+    const { error } = await db.storage
+      .from('profile-images')
+      .upload(filename, file, { upsert: true, contentType: file.type });
+    if (error) {
+      toast('Upload failed: ' + error.message, 'err'); return null;
+    }
+    const { data } = db.storage.from('profile-images').getPublicUrl(filename);
+    return data.publicUrl;
+  }
+
+  // ─── Helpers ─────────────────────────────────────────────────────────────
+  function escHtml(str) {
+    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function errState(msg) {
+    return `<div class="state-empty"><i class="fas fa-exclamation-circle"></i><p>Error: ${escHtml(msg)}</p></div>`;
+  }
+  </script>
+</body>
+</html>
