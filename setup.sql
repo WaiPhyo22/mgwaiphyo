@@ -99,6 +99,31 @@ INSERT INTO profile (
   'https://www.facebook.com/way.phyo.353/'
 ) ON CONFLICT (id) DO NOTHING;
 
+-- ── Contact Messages ────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS contact_messages (
+  id BIGSERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  message TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can submit a message (public portfolio contact form)
+DROP POLICY IF EXISTS "Public insert messages" ON contact_messages;
+CREATE POLICY "Public insert messages" ON contact_messages FOR INSERT WITH CHECK (true);
+
+-- Only authenticated admins can read, update (mark read), or delete messages
+DROP POLICY IF EXISTS "Auth read messages"   ON contact_messages;
+DROP POLICY IF EXISTS "Auth update messages" ON contact_messages;
+DROP POLICY IF EXISTS "Auth delete messages" ON contact_messages;
+CREATE POLICY "Auth read messages"   ON contact_messages FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Auth update messages" ON contact_messages FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Auth delete messages" ON contact_messages FOR DELETE TO authenticated USING (true);
+
 -- ── Admin Users (for user list in dashboard) ────────────────
 
 CREATE TABLE IF NOT EXISTS admin_users (

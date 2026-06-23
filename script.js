@@ -45,15 +45,17 @@ function updateActiveNav() {
 }
 
 // ===== TYPING ANIMATION =====
-const roles = [
-  'Senior Web Engineer',
-  'Laravel Developer',
-  'Full-Stack Engineer',
-  'API Integration Expert',
-  'AI-Powered Developer',
-];
+let roles = (window.TRANSLATIONS && window.I18N)
+  ? (window.TRANSLATIONS[window.I18N.getCurrentLang()] || window.TRANSLATIONS.en).typing_roles
+  : ['Senior Web Engineer','Laravel Developer','Full-Stack Engineer','API Integration Expert','AI-Powered Developer'];
 let roleIdx = 0, charIdx = 0, typing = true;
 const typingEl = document.getElementById('typingText');
+
+window.updateTypingRoles = function(newRoles) {
+  roles = newRoles;
+  roleIdx = 0; charIdx = 0; typing = true;
+  if (typingEl) typingEl.textContent = '';
+};
 
 function typeStep() {
   if (!typingEl) return;

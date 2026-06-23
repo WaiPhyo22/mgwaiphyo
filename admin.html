@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard – Wai Phyo</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="shortcut icon" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -568,6 +571,11 @@
         <i class="fas fa-briefcase"></i> Experience
       </a>
 
+      <a class="sb-link" data-sec="messages">
+        <i class="fas fa-inbox"></i> Messages
+        <span class="sb-badge" id="msgBadge" style="display:none;margin-left:auto;background:var(--accent);color:var(--navy);font-size:.62rem;font-weight:700;padding:.15rem .45rem;border-radius:50px;line-height:1.4"></span>
+      </a>
+
       <div class="sb-section">Settings</div>
       <a class="sb-link" data-sec="profile">
         <i class="fas fa-user-circle"></i> Profile
@@ -629,11 +637,11 @@
               <div class="stat-lbl">Experience Entries</div>
             </div>
           </div>
-          <div class="stat-card">
-            <div class="stat-ico si-amber"><i class="fas fa-star"></i></div>
+          <div class="stat-card" style="cursor:pointer" onclick="goTo('messages')">
+            <div class="stat-ico si-amber"><i class="fas fa-inbox"></i></div>
             <div>
-              <div class="stat-val">7+</div>
-              <div class="stat-lbl">Years Experience</div>
+              <div class="stat-val" id="st-messages">–</div>
+              <div class="stat-lbl">Unread Messages</div>
             </div>
           </div>
         </div>
@@ -729,6 +737,24 @@
         </div>
       </section>
 
+      <!-- ── MESSAGES ── -->
+      <section class="section" id="sec-messages">
+        <div class="page-hd">
+          <div>
+            <div class="page-hd-title">Messages</div>
+            <div class="page-hd-sub">Contact form submissions from your portfolio</div>
+          </div>
+          <button class="btn btn-secondary" onclick="loadMessages()">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+        <div class="card">
+          <div id="messages-body">
+            <div class="state-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
+          </div>
+        </div>
+      </section>
+
       <!-- ── USERS ── -->
       <section class="section" id="sec-users">
         <div class="page-hd">
@@ -793,7 +819,8 @@
   // ─── Navigation ───────────────────────────────────────────────────────────
   const SEC_TITLES = {
     overview: 'Overview', projects: 'Projects',
-    skills: 'Skills', experience: 'Experience', profile: 'Profile', users: 'Users'
+    skills: 'Skills', experience: 'Experience',
+    messages: 'Messages', profile: 'Profile', users: 'Users'
   };
 
   document.querySelectorAll('.sb-link[data-sec]').forEach(a => {
@@ -812,6 +839,7 @@
     else if (name === 'projects') loadProjects();
     else if (name === 'skills') loadSkills();
     else if (name === 'experience') loadExperience();
+    else if (name === 'messages') loadMessages();
     else if (name === 'profile') loadProfile();
     else if (name === 'users') loadUsers();
   }
@@ -843,14 +871,86 @@
 
   // ─── Stats ────────────────────────────────────────────────────────────────
   async function loadStats() {
-    const [p, s, e] = await Promise.all([
+    const [p, s, e, m] = await Promise.all([
       db.from('projects').select('id', { count: 'exact', head: true }),
       db.from('skills').select('id', { count: 'exact', head: true }),
-      db.from('experience').select('id', { count: 'exact', head: true })
+      db.from('experience').select('id', { count: 'exact', head: true }),
+      db.from('contact_messages').select('id', { count: 'exact', head: true }).eq('is_read', false)
     ]);
     document.getElementById('st-projects').textContent = p.count ?? '–';
     document.getElementById('st-skills').textContent = s.count ?? '–';
     document.getElementById('st-exp').textContent = e.count ?? '–';
+    const unread = m.count ?? 0;
+    const stMsg = document.getElementById('st-messages');
+    if (stMsg) stMsg.textContent = unread;
+    const badge = document.getElementById('msgBadge');
+    if (badge) { badge.textContent = unread; badge.style.display = unread > 0 ? '' : 'none'; }
+  }
+
+  // ─── MESSAGES ─────────────────────────────────────────────────────────────
+  async function loadMessages() {
+    const el = document.getElementById('messages-body');
+    el.innerHTML = '<div class="state-loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>';
+    const { data, error } = await db.from('contact_messages').select('*').order('created_at', { ascending: false });
+    if (error) { el.innerHTML = errState(error.message); return; }
+    if (!data?.length) {
+      el.innerHTML = `<div class="state-empty"><i class="fas fa-inbox"></i><p>No messages yet. They'll appear here once someone submits the contact form.</p></div>`;
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>From</th><th>Email</th><th>Message</th><th>Date</th><th>Actions</th>
+        </tr></thead>
+        <tbody>
+          ${data.map(m => {
+            const date = new Date(m.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+            const preview = escHtml(m.message).substring(0, 90) + (m.message.length > 90 ? '…' : '');
+            return `<tr style="${m.is_read ? '' : 'background:rgba(243,156,18,.04);'}">
+              <td>
+                <div style="display:flex;align-items:center;gap:.6rem">
+                  ${!m.is_read ? '<span style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;display:inline-block"></span>' : '<span style="width:7px;flex-shrink:0;display:inline-block"></span>'}
+                  <span style="font-weight:${m.is_read ? '500' : '700'};font-size:.875rem">${escHtml(m.name)}</span>
+                </div>
+              </td>
+              <td><a href="mailto:${escHtml(m.email)}" style="color:var(--accent);text-decoration:none;font-size:.875rem">${escHtml(m.email)}</a></td>
+              <td style="max-width:260px;font-size:.82rem;color:var(--muted);white-space:normal">${preview}</td>
+              <td style="white-space:nowrap;font-size:.82rem;color:var(--muted)">${date}</td>
+              <td>
+                <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+                  ${!m.is_read
+                    ? `<button class="btn btn-secondary btn-sm" onclick="markMessageRead(${m.id})"><i class="fas fa-check"></i> Read</button>`
+                    : `<button class="btn btn-secondary btn-sm" onclick="viewMessage(${m.id},'${escHtml(m.name).replace(/'/g,"\\'")}','${escHtml(m.email).replace(/'/g,"\\'")}','${escHtml(m.message).replace(/'/g,"\\'").replace(/\n/g,'\\n')}')"><i class="fas fa-eye"></i> View</button>`
+                  }
+                  <button class="btn btn-danger btn-sm" onclick="deleteMessage(${m.id})"><i class="fas fa-trash"></i></button>
+                </div>
+              </td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  async function markMessageRead(id) {
+    const { error } = await db.from('contact_messages').update({ is_read: true }).eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    loadMessages(); loadStats();
+  }
+
+  function viewMessage(id, name, email, message) {
+    openModal(`Message from ${name}`, `
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:.25rem"><strong>From:</strong> ${escHtml(name)}</p>
+      <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.2rem"><strong>Email:</strong> <a href="mailto:${escHtml(email)}" style="color:var(--accent)">${escHtml(email)}</a></p>
+      <div style="background:var(--bg);border-radius:var(--r-sm);padding:1rem;font-size:.875rem;line-height:1.7;white-space:pre-wrap;color:var(--text)">${escHtml(message)}</div>
+      <div style="margin-top:1rem"><a href="mailto:${escHtml(email)}" class="btn btn-primary" style="text-decoration:none"><i class="fas fa-reply"></i> Reply via Email</a></div>
+    `, null);
+  }
+
+  async function deleteMessage(id) {
+    if (!confirm('Delete this message? This cannot be undone.')) return;
+    const { error } = await db.from('contact_messages').delete().eq('id', id);
+    if (error) { toast('Error: ' + error.message, 'err'); return; }
+    toast('Message deleted.'); loadMessages(); loadStats();
   }
 
   // ─── PROJECTS CRUD ────────────────────────────────────────────────────────
