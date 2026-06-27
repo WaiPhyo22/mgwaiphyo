@@ -340,9 +340,6 @@ window.I18N = (function () {
       if (d[k] !== undefined) el.placeholder = d[k];
     });
 
-    var labels = { en: 'EN', my: 'မြ', ja: '日' };
-    var ll = document.getElementById('langLabel');
-    if (ll) ll.textContent = labels[lang] || 'EN';
     document.querySelectorAll('.lang-option').forEach(function (btn) {
       btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
@@ -352,23 +349,10 @@ window.I18N = (function () {
     }
   }
 
-  // Wire up dropdown
-  var langBtn      = document.getElementById('langBtn');
-  var langDropdown = document.getElementById('langDropdown');
-  if (langBtn && langDropdown) {
-    langBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      langDropdown.classList.toggle('open');
-    });
-    document.addEventListener('click', function () {
-      langDropdown.classList.remove('open');
-    });
-    langDropdown.addEventListener('click', function (e) { e.stopPropagation(); });
-  }
+  // Wire up segmented toggle buttons
   document.querySelectorAll('.lang-option').forEach(function (btn) {
     btn.addEventListener('click', function () {
       apply(btn.getAttribute('data-lang'));
-      if (langDropdown) langDropdown.classList.remove('open');
     });
   });
 

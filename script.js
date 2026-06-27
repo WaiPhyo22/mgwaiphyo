@@ -135,6 +135,59 @@ if (aboutImg) {
   });
 }
 
+// ===== CUSTOM CURSOR =====
+(function initCursor() {
+  if (window.matchMedia('(pointer: coarse)').matches) return; // skip touch devices
+
+  const dot  = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  if (!dot || !ring) return;
+
+  let mouseX = -100, mouseY = -100;
+  let ringX  = -100, ringY  = -100;
+  let rafId;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top  = mouseY + 'px';
+  }, { passive: true });
+
+  // Smooth ring follows with lerp
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top  = ringY + 'px';
+    rafId = requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Hover state on interactive elements
+  const interactors = 'a, button, [role="button"], label, input, textarea, select, .btn';
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest(interactors)) ring.classList.add('hovered');
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest(interactors)) ring.classList.remove('hovered');
+  });
+
+  // Click pulse
+  document.addEventListener('mousedown', () => ring.classList.add('clicking'));
+  document.addEventListener('mouseup',   () => ring.classList.remove('clicking'));
+
+  // Hide when cursor leaves window
+  document.addEventListener('mouseleave', () => {
+    dot.classList.add('hidden');
+    ring.classList.add('hidden');
+  });
+  document.addEventListener('mouseenter', () => {
+    dot.classList.remove('hidden');
+    ring.classList.remove('hidden');
+  });
+})();
+
 // ===== PARTICLES =====
 (function spawnParticles() {
   const container = document.getElementById('particles');

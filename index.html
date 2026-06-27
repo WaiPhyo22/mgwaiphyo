@@ -105,6 +105,16 @@
 </head>
 <body>
 
+  <!-- ===== CUSTOM CURSOR ===== -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- ===== FIXED HIRE ME (mobile only) ===== -->
+  <a href="#contact" class="hire-fab">
+    <i class="fas fa-paper-plane"></i>
+    <span>Hire Me</span>
+  </a>
+
   <div id="scroll-progress"></div>
 
   <!-- ===== NAVBAR ===== -->
@@ -142,17 +152,9 @@
 
       <!-- Desktop-only right actions -->
       <div class="nav-actions">
-        <div class="lang-switcher" id="langSwitcher">
-          <button class="lang-btn" id="langBtn" aria-label="Change language">
-            <i class="fas fa-globe"></i>
-            <span id="langLabel">EN</span>
-            <i class="fas fa-chevron-down lang-caret"></i>
-          </button>
-          <div class="lang-dropdown" id="langDropdown">
-            <button class="lang-option active" data-lang="en"><span class="lang-flag">🇬🇧</span> English</button>
-            <button class="lang-option" data-lang="my" style="display:none"><span class="lang-flag">🇲🇲</span> မြန်မာ</button>
-            <button class="lang-option" data-lang="ja"><span class="lang-flag">🇯🇵</span> 日本語</button>
-          </div>
+        <div class="lang-switcher" id="langSwitcher" role="group" aria-label="Language">
+          <button class="lang-seg lang-option active" data-lang="en" aria-label="English">English</button>
+          <button class="lang-seg lang-option" data-lang="ja" aria-label="日本語">日本語</button>
         </div>
         <a href="#contact" class="nav-cta">Hire Me <i class="fas fa-arrow-right"></i></a>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
